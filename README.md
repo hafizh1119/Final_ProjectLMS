@@ -1,5 +1,23 @@
 # Testing Results
 
+Architecture Diagram
+graph TD
+    User --> DjangoAPI
+
+    DjangoAPI --> PostgreSQL
+    DjangoAPI --> Redis
+    DjangoAPI --> MongoDB
+
+    DjangoAPI --> Celery
+
+    Celery --> EmailTask
+    Celery --> CertificateTask
+    Celery --> ReportTask
+    Celery --> StatisticsTask
+
+    Flower --> Celery
+    RabbitMQ --> Celery
+
 ## Redis Cache
 
 Bukti Course List Cache dan Course Detail Cache.
