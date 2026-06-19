@@ -34,8 +34,6 @@ graph TD
 
 Screenshot berikut menunjukkan seluruh service Docker berhasil berjalan.
 
-**Screenshot:** `docker ps`
-
 ![Swagger API](docs/Docker-Services.png)
 
 Container yang aktif:
@@ -54,8 +52,6 @@ Container yang aktif:
 # API Documentation
 
 Screenshot berikut menunjukkan dokumentasi API berhasil digenerate menggunakan Swagger.
-
-**Screenshot:** `http://localhost:8000/api/docs`
 
 ![Swagger API](docs/API.png)
 
@@ -121,8 +117,6 @@ flowchart LR
 
 Screenshot berikut menunjukkan key cache berhasil tersimpan di Redis.
 
-**Screenshot:** `redis-cli -> KEYS *`
-
 ![Swagger API](docs/Redis-Cache.png)
 
 Key yang berhasil dibuat:
@@ -135,8 +129,6 @@ Key yang berhasil dibuat:
 # Rate Limiting
 
 Screenshot berikut menunjukkan implementasi Redis Rate Limiting.
-
-**Screenshot:** `lms/throttle.py`
 
 ![Swagger API](docs/Rate-Limiting.png)
 
@@ -192,8 +184,6 @@ flowchart LR
 
 Screenshot berikut menunjukkan collection MongoDB berhasil dibuat.
 
-**Screenshot:** `show collections`
-
 ![Swagger API](docs/MongoDB-Collections.png)
 
 Collection:
@@ -206,8 +196,6 @@ Collection:
 # Activity Logs
 
 Screenshot berikut menunjukkan aktivitas pengguna berhasil dicatat ke MongoDB.
-
-**Screenshot:** `db.activity_logs.find().limit(5).pretty()`
 
 ![Swagger API](docs/Activity-Logs.png)
 
@@ -223,8 +211,6 @@ Aktivitas yang tercatat:
 
 Screenshot berikut menunjukkan data analytics pembelajaran tersimpan di MongoDB.
 
-**Screenshot:** `db.learning_analytics.find().limit(5).pretty()`
-
 ![Swagger API](docs/Learning-Analytics.png)
 
 Data yang tersimpan:
@@ -239,8 +225,6 @@ Data yang tersimpan:
 # Aggregation Query
 
 Screenshot berikut menunjukkan query agregasi MongoDB berhasil dijalankan.
-
-**Screenshot:** `db.learning_analytics.aggregate(...)`
 
 ![Swagger API](docs/Aggregation-Query.png)
 
