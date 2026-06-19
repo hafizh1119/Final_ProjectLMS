@@ -36,7 +36,7 @@ Screenshot berikut menunjukkan seluruh service Docker berhasil berjalan.
 
 **Screenshot:** `docker ps`
 
-![Swagger API](docs/Docker Services.png)
+![Swagger API](docs/Docker-Services.png)
 
 Container yang aktif:
 
@@ -123,7 +123,7 @@ Screenshot berikut menunjukkan key cache berhasil tersimpan di Redis.
 
 **Screenshot:** `redis-cli -> KEYS *`
 
-![Swagger API](docs/Redis Cache.png)
+![Swagger API](docs/Redis-Cache.png)
 
 Key yang berhasil dibuat:
 
@@ -138,7 +138,7 @@ Screenshot berikut menunjukkan implementasi Redis Rate Limiting.
 
 **Screenshot:** `lms/throttle.py`
 
-![Swagger API](docs/Rate Limiting.png)
+![Swagger API](docs/Rate-Limiting.png)
 
 Konfigurasi:
 
@@ -194,7 +194,7 @@ Screenshot berikut menunjukkan collection MongoDB berhasil dibuat.
 
 **Screenshot:** `show collections`
 
-![Swagger API](docs/MongoDB Collections.png)
+![Swagger API](docs/MongoDB-Collections.png)
 
 Collection:
 
@@ -209,7 +209,7 @@ Screenshot berikut menunjukkan aktivitas pengguna berhasil dicatat ke MongoDB.
 
 **Screenshot:** `db.activity_logs.find().limit(5).pretty()`
 
-![Swagger API](docs/Activity Logs.png)
+![Swagger API](docs/Activity-Logs.png)
 
 Aktivitas yang tercatat:
 
@@ -225,7 +225,7 @@ Screenshot berikut menunjukkan data analytics pembelajaran tersimpan di MongoDB.
 
 **Screenshot:** `db.learning_analytics.find().limit(5).pretty()`
 
-![Swagger API](docs/Learning Analytics.png)
+![Swagger API](docs/Learning-Analytics.png)
 
 Data yang tersimpan:
 
@@ -242,7 +242,7 @@ Screenshot berikut menunjukkan query agregasi MongoDB berhasil dijalankan.
 
 **Screenshot:** `db.learning_analytics.aggregate(...)`
 
-![Swagger API](docs/Aggregation Query.png)
+![Swagger API](docs/Aggregation-Query.png)
 
 Tujuan:
 
@@ -286,7 +286,7 @@ Fungsi:
 
 Screenshot berikut menunjukkan file sertifikat PDF berhasil dibuat.
 
-![Swagger API](docs/CSV Report Generation.png)
+![Swagger API](docs/CSV-Report-Generation.png)
 
 File:
 
@@ -298,7 +298,7 @@ File:
 
 Screenshot berikut menunjukkan file laporan CSV berhasil dibuat.
 
-![Swagger API](docs/CSV Report Generation.png)
+![Swagger API](docs/CSV-Report-Generation.png)
 
 File:
 
