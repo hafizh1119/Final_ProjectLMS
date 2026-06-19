@@ -127,9 +127,14 @@ def list_courses(request, search: Optional[str] = None):
 
 @api.get("/courses/{id}")
 def detail_course(request, id: int):
+    cache_key = f"course:{id}"
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
     course = get_object_or_404(Course, id=id)
-    return CourseOut.from_orm(course)
-
+    result = CourseOut.from_orm(course)
+    cache.set(cache_key, result, 300)
+    return result
 
 @api.post("/courses", auth=auth)
 def create_course(request, data: CourseIn):
@@ -141,6 +146,8 @@ def create_course(request, data: CourseIn):
         price=data.price,
         teacher=request.auth,
     )
+    cache.delete_pattern("courses:list:*")
+
     return CourseOut.from_orm(course)
 
 
@@ -157,14 +164,23 @@ def update_course(request, id: int, data: CoursePatchIn):
         course.price = data.price
 
     course.save()
+
+    cache.delete_pattern("courses:list:*")
+    cache.delete(f"course:{course.id}")
+
     return CourseOut.from_orm(course)
 
 
 @api.delete("/courses/{id}", auth=auth)
 def delete_course(request, id: int):
+
     is_admin(request.auth)
 
     course = get_object_or_404(Course, id=id)
+
+    cache.delete_pattern("courses:list:*")
+    cache.delete(f"course:{id}")
+
     course.delete()
 
     return {"success": True}
