@@ -36,17 +36,17 @@ Fitur ini memungkinkan pengguna mencari course berdasarkan **keyword**, serta me
 
 ### 2. Rating, Review, dan Wishlist Course
 
-Mahasiswa (Student) dapat memberikan rating dan review terhadap course yang telah diikuti, serta menyimpan course ke dalam wishlist sebagai daftar course favorit.
+Fitur ini memungkinkan **Student** memberikan **rating** dan **review** terhadap course yang telah diikuti, serta menyimpan course ke dalam **wishlist** sebagai daftar course favorit yang dapat diakses kembali.
 
-Sistem rating menggunakan skala 1–5, dengan keterangan:
+Sistem rating menggunakan skala **1–5** dengan ketentuan sebagai berikut:
 
-1 = Sangat Buruk
-2 = Buruk
-3 = Cukup
-4 = Baik
-5 = Sangat Baik
+* **1** = Sangat Buruk
+* **2** = Buruk
+* **3** = Cukup
+* **4** = Baik
+* **5** = Sangat Baik
 
-Setiap mahasiswa hanya dapat memberikan satu review untuk setiap course yang diikuti, sehingga penilaian yang diberikan tetap konsisten.
+Setiap **Student** hanya dapat memberikan **satu review** untuk setiap course yang telah diikuti, sehingga setiap course hanya memiliki satu penilaian dari setiap mahasiswa. Selain itu, fitur **wishlist** memungkinkan Student menyimpan course favorit untuk memudahkan pencarian dan akses kembali di kemudian hari.
 
 ### 3. Curriculum dan Progress Belajar
 
@@ -156,24 +156,76 @@ Seeder akan membuat akun demo dengan kredensial berikut.
 
 Berikut merupakan endpoint utama yang digunakan untuk menguji seluruh fitur pada project **Simple-LMS**.
 
-| Method     | Endpoint                         | Deskripsi                                                                                                |
-| ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **POST**   | `/api/auth/register`             | Registrasi pengguna baru.                                                                                |
-| **POST**   | `/api/auth/login`                | Login dan mendapatkan JWT Access Token serta Refresh Token.                                              |
-| **GET**    | `/api/auth/me`                   | Menampilkan informasi pengguna yang sedang login.                                                        |
-| **GET**    | `/api/courses`                   | Menampilkan daftar course beserta fitur search, filter, dan sorting.                                     |
-| **POST**   | `/api/courses`                   | Menambahkan course baru.                                                                                 |
-| **GET**    | `/api/courses/{id}`              | Menampilkan detail course.                                                                               |
-| **GET**    | `/api/modules`                   | Menampilkan curriculum course berupa module beserta content.                                             |
-| **POST**   | `/api/modules`                   | Menambahkan module pada course.                                                                          |
-| **POST**   | `/api/enrollments`               | Melakukan enrollment (mendaftar) ke course.                                                              |
-| **GET**    | `/api/enrollments/my-courses`    | Menampilkan daftar course yang telah diikuti oleh student.                                               |
-| **POST**   | `/api/enrollments/{id}/progress` | Menandai content sebagai selesai dipelajari.                                                             |
-| **GET**    | `/api/courses/{id}/progress`     | Menampilkan progress belajar pada suatu course.                                                          |
-| **POST**   | `/api/courses/{id}/reviews`      | Memberikan rating dan review pada course.                                                                |
-| **GET**    | `/api/courses/{id}/reviews`      | Menampilkan daftar review suatu course.                                                                  |
-| **POST**   | `/api/courses/{id}/wishlist`     | Menambahkan course ke wishlist.                                                                          |
-| **DELETE** | `/api/courses/{id}/wishlist`     | Menghapus course dari wishlist.                                                                          |
-| **GET**    | `/api/wishlist`                  | Menampilkan daftar course favorit (wishlist).                                                            |
-| **GET**    | `/api/dashboard`                 | Menampilkan dashboard mahasiswa yang berisi course aktif, progress pembelajaran, dan rekomendasi course. |
+### Authentication
+
+| Method | Endpoint             | Deskripsi                                                   |
+| ------ | -------------------- | ----------------------------------------------------------- |
+| POST   | `/api/auth/register` | Registrasi pengguna baru.                                   |
+| POST   | `/api/auth/login`    | Login dan mendapatkan JWT Access Token serta Refresh Token. |
+| GET    | `/api/auth/me`       | Menampilkan informasi pengguna yang sedang login.           |
+
+---
+
+### Course
+
+| Method | Endpoint            | Deskripsi                                                            |
+| ------ | ------------------- | -------------------------------------------------------------------- |
+| GET    | `/api/courses`      | Menampilkan daftar course beserta fitur search, filter, dan sorting. |
+| POST   | `/api/courses`      | Menambahkan course baru.                                             |
+| GET    | `/api/courses/{id}` | Menampilkan detail course.                                           |
+
+---
+
+### Curriculum (Module & Content)
+
+| Method | Endpoint       | Deskripsi                                                    |
+| ------ | -------------- | ------------------------------------------------------------ |
+| GET    | `/api/modules` | Menampilkan curriculum course berupa module beserta content. |
+| POST   | `/api/modules` | Menambahkan module pada course.                              |
+
+---
+
+### Enrollment
+
+| Method | Endpoint                      | Deskripsi                                                  |
+| ------ | ----------------------------- | ---------------------------------------------------------- |
+| POST   | `/api/enrollments`            | Melakukan enrollment (mendaftar) ke course.                |
+| GET    | `/api/enrollments/my-courses` | Menampilkan daftar course yang telah diikuti oleh student. |
+
+---
+
+### Progress
+
+| Method | Endpoint                         | Deskripsi                                       |
+| ------ | -------------------------------- | ----------------------------------------------- |
+| POST   | `/api/enrollments/{id}/progress` | Menandai content sebagai selesai dipelajari.    |
+| GET    | `/api/courses/{id}/progress`     | Menampilkan progress belajar pada suatu course. |
+
+---
+
+### Review
+
+| Method | Endpoint                    | Deskripsi                                 |
+| ------ | --------------------------- | ----------------------------------------- |
+| POST   | `/api/courses/{id}/reviews` | Memberikan rating dan review pada course. |
+| GET    | `/api/courses/{id}/reviews` | Menampilkan daftar review suatu course.   |
+
+---
+
+### Wishlist
+
+| Method | Endpoint                     | Deskripsi                                     |
+| ------ | ---------------------------- | --------------------------------------------- |
+| POST   | `/api/courses/{id}/wishlist` | Menambahkan course ke wishlist.               |
+| DELETE | `/api/courses/{id}/wishlist` | Menghapus course dari wishlist.               |
+| GET    | `/api/wishlist`              | Menampilkan daftar course favorit (wishlist). |
+
+---
+
+### Dashboard
+
+| Method | Endpoint         | Deskripsi                                                                          |
+| ------ | ---------------- | ---------------------------------------------------------------------------------- |
+| GET    | `/api/dashboard` | Menampilkan ringkasan course aktif, progress pembelajaran, dan rekomendasi course. |
+
 
