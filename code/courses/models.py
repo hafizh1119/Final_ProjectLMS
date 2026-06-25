@@ -1,12 +1,42 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+LEVEL_CHOICES = [
+    ("beginner", "Beginner"),
+    ("intermediate", "Intermediate"),
+    ("advanced", "Advanced"),
+]
+
+STATUS_CHOICES = [
+    ("draft", "Draft"),
+    ("published", "Published"),
+]
 
 class Course(models.Model):
     name = models.CharField("nama matkul", max_length=100)
     description = models.TextField("deskripsi", default='-')
     price = models.IntegerField("harga", default=10000)
     image = models.ImageField("gambar", null=True, blank=True)
+    level = models.CharField(
+        "level",
+        max_length=20,
+        choices=LEVEL_CHOICES,
+        default="beginner"
+    )
+
+    status = models.CharField(
+        "status",
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="published"
+    )
+    category = models.ForeignKey(
+        "Category",
+        verbose_name="kategori",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     teacher = models.ForeignKey(
         User,
         verbose_name="pengajar",
@@ -31,6 +61,57 @@ ROLE_OPTIONS = [
     ('std', "Siswa"),
     ('ast', "Asisten"),
 ]
+
+class Category(models.Model):
+    name = models.CharField(
+        "nama kategori",
+        max_length=100,
+        unique=True
+    )
+
+    description = models.TextField(
+        "deskripsi",
+        blank=True,
+        default=""
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Kategori"
+        verbose_name_plural = "Kategori"
+
+
+class CourseModule(models.Model):
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="modules"
+    )
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    description = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    order = models.PositiveIntegerField(
+        default=1
+    )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["order"]
+
+        verbose_name = "Module"
+        verbose_name_plural = "Modules"
 
 
 class CourseMember(models.Model):
@@ -73,6 +154,13 @@ class CourseContent(models.Model):
         Course,
         verbose_name="matkul",
         on_delete=models.RESTRICT
+    )
+    module = models.ForeignKey(
+        "CourseModule",
+        on_delete=models.CASCADE,
+        related_name="contents",
+        null=True,
+        blank=True
     )
     parent_id = models.ForeignKey(
         "self",
@@ -133,3 +221,62 @@ class CourseContentCompletion(models.Model):
 
     class Meta:
         unique_together = ("member_id", "content_id")
+
+class CourseReview(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="reviews"
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    rating = models.PositiveSmallIntegerField()
+
+    review = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.name}"
+
+    class Meta:
+        verbose_name = "Review Course"
+        verbose_name_plural = "Review Course"
+        unique_together = ("course", "user")
+
+class CourseWishlist(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="wishlists"
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.name}"
+
+    class Meta:
+        verbose_name = "Wishlist Course"
+        verbose_name_plural = "Wishlist Course"
+        unique_together = ("course", "user")

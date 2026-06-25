@@ -22,7 +22,7 @@ import random
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from courses.models import Course, CourseMember, CourseContent, Comment
+from courses.models import Category, Course, CourseModule, CourseMember, CourseContent, CourseContentCompletion, CourseReview, CourseWishlist, Comment
 
 
 # =============================================================================
@@ -77,6 +77,25 @@ CONTENT_PREFIXES = [
     'Diskusi',
     'Proyek',
     'Tugas',
+]
+
+MODULES = [
+    "Pendahuluan",
+    "Materi Inti",
+    "Praktikum",
+]
+
+REVIEW_TEXTS = [
+    "Materinya sangat mudah dipahami.",
+    "Penjelasan dosen sangat jelas.",
+    "Course ini sangat membantu.",
+    "Materinya lengkap dan terstruktur.",
+    "Latihan yang diberikan sangat bermanfaat.",
+    "Video pembelajaran sangat baik.",
+    "Sangat direkomendasikan untuk dipelajari.",
+    "Penyampaian materi sangat menarik.",
+    "Materi sesuai dengan kebutuhan industri.",
+    "Semoga ada materi lanjutan."
 ]
 
 CONTENT_TOPICS = [
@@ -141,11 +160,15 @@ class Command(BaseCommand):
 
         teachers = self._seed_teachers()
         students = self._seed_students()
-        courses = self._seed_courses(teachers)
+        categories = self._seed_categories()
+        courses = self._seed_courses(teachers, categories)
+        modules = self._seed_modules(courses)
         members = self._seed_members(courses, students)
-        contents = self._seed_contents(courses)
+        contents = self._seed_contents(modules)
+        self._seed_progress(contents, members)
         self._seed_comments(contents, members)
-
+        self._seed_reviews(members)
+        self._seed_wishlist(students, courses)
         self._print_summary()
 
         self.stdout.write('')
@@ -158,7 +181,7 @@ class Command(BaseCommand):
     # Step 1: Buat 20 User pengajar
     # -------------------------------------------------------------------------
     def _seed_teachers(self):
-        self.stdout.write('\n[1/6] Membuat pengajar (dosen01 - dosen20)...')
+        self.stdout.write('\n[1/11] Membuat pengajar (dosen01 - dosen20)...')
 
         existing = set(
             User.objects.filter(username__startswith='dosen')
@@ -193,7 +216,7 @@ class Command(BaseCommand):
     # Step 2: Buat 80 User mahasiswa
     # -------------------------------------------------------------------------
     def _seed_students(self):
-        self.stdout.write('\n[2/6] Membuat mahasiswa (mhs001 - mhs080)...')
+        self.stdout.write('\n[2/11] Membuat mahasiswa (mhs001 - mhs080)...')
 
         existing = set(
             User.objects.filter(username__startswith='mhs')
@@ -220,10 +243,38 @@ class Command(BaseCommand):
         return students
 
     # -------------------------------------------------------------------------
-    # Step 3: Buat 100 Course
+    # Step 3: Buat Category
     # -------------------------------------------------------------------------
-    def _seed_courses(self, teachers):
-        self.stdout.write('\n[3/6] Membuat 100 mata kuliah...')
+    def _seed_categories(self):
+        self.stdout.write("\n[3/11] Membuat kategori...")
+
+        categories = [
+            ("Programming", "Programming Course"),
+            ("Programming Berbasis Web", "Belajar Web"),
+            ("Programming Sisi Klien", "Frontend Development"),
+            ("Programming Sisi Server", "Backend Development"),
+            ("Jaringan", "Networking"),
+        ]
+
+        for name, desc in categories:
+            Category.objects.get_or_create(
+                name=name,
+                defaults={
+                    "description": desc
+                }
+            )
+
+        self.stdout.write(
+            f"  → {Category.objects.count()} kategori tersedia"
+        )
+
+        return list(Category.objects.all())
+    
+    # -------------------------------------------------------------------------
+    # Step 4: Buat 100 Course
+    # -------------------------------------------------------------------------
+    def _seed_courses(self, teachers, categories):
+        self.stdout.write('\n[4/11] Membuat 100 mata kuliah...')
 
         existing_count = Course.objects.count()
         to_create = []
@@ -241,7 +292,18 @@ class Command(BaseCommand):
                     f'menerapkan ilmu ini di dunia kerja.'
                 ),
                 price=random.choice(PRICES),
+                category=random.choice(categories),
                 teacher=random.choice(teachers),
+                level=random.choice([
+                    "beginner",
+                    "intermediate",
+                    "advanced",
+                ]),
+
+                status=random.choice([
+                    "published",
+                    "draft",
+                ]),
             ))
 
         if to_create:
@@ -250,12 +312,45 @@ class Command(BaseCommand):
         courses = list(Course.objects.all()[:100])
         self.stdout.write(f'  → {Course.objects.count()} mata kuliah tersedia')
         return courses
-
+    
     # -------------------------------------------------------------------------
-    # Step 4: Buat 500 CourseMember
+    # Step 5: Buat Module
+    # -------------------------------------------------------------------------
+    def _seed_modules(self, courses):
+        if CourseModule.objects.exists():
+            self.stdout.write(f"  → {CourseModule.objects.count()} module tersedia (skip)")
+            return list(CourseModule.objects.all())
+        self.stdout.write("\n[5/11] Membuat module...")
+
+        modules = []
+
+        for course in courses:
+
+            for index, title in enumerate(MODULES, start=1):
+
+                modules.append(
+                    CourseModule(
+                        course=course,
+                        title=title,
+                        description=f"Module {title} untuk {course.name}",
+                        order=index,
+                    )
+                )
+
+        if modules:
+            CourseModule.objects.bulk_create(modules, batch_size=500)
+
+        self.stdout.write(
+            f"  → {CourseModule.objects.count()} module tersedia"
+        )
+
+        return list(CourseModule.objects.all())
+    
+    # -------------------------------------------------------------------------
+    # Step 6: Buat 500 CourseMember
     # -------------------------------------------------------------------------
     def _seed_members(self, courses, students):
-        self.stdout.write('\n[4/6] Membuat 500 anggota kelas...')
+        self.stdout.write('\n[6/11] Membuat 500 anggota kelas...')
 
         existing_count = CourseMember.objects.count()
         # Buat set pasangan (course_id, user_id) yang sudah ada untuk cek duplikat
@@ -290,41 +385,138 @@ class Command(BaseCommand):
         return members
 
     # -------------------------------------------------------------------------
-    # Step 5: Buat 300 CourseContent
+    # Step 7: Buat 900 CourseContent (3 content setiap module)
     # -------------------------------------------------------------------------
-    def _seed_contents(self, courses):
-        self.stdout.write('\n[5/6] Membuat 300 konten kelas...')
+    def _seed_contents(self, modules):
+        self.stdout.write('\n[7/11] Membuat 900 konten kelas...')
 
-        existing_count = CourseContent.objects.count()
+        if CourseContent.objects.exists():
+            contents = list(CourseContent.objects.all())
+            self.stdout.write(
+                f'  → {len(contents)} konten sudah tersedia'
+            )
+            return contents
+
         to_create = []
 
-        for i in range(existing_count, 300):
-            course = courses[i % len(courses)]
-            prefix = CONTENT_PREFIXES[i % len(CONTENT_PREFIXES)]
-            topic = random.choice(CONTENT_TOPICS)
-            to_create.append(CourseContent(
-                name=f'{prefix} {topic}',
-                description=(
-                    f'Materi {prefix.lower()} mengenai {topic.lower()} '
-                    f'dalam konteks {course.name}. '
-                    f'Pelajari konsep ini dengan seksama sebelum mengerjakan latihan.'
-                ),
-                course_id=course,
-                parent_id=None,  # Top-level content (tanpa induk)
-            ))
+        CONTENT_TYPES = [
+            "Materi",
+            "Video",
+            "Kuis"
+        ]
 
-        if to_create:
-            CourseContent.objects.bulk_create(to_create, batch_size=500)
+        for module in modules:
 
-        contents = list(CourseContent.objects.all()[:300])
-        self.stdout.write(f'  → {CourseContent.objects.count()} konten tersedia')
+            for i, content_type in enumerate(CONTENT_TYPES, start=1):
+
+                to_create.append(
+                    CourseContent(
+                        name=f"{content_type} {module.title}",
+                        description=(
+                            f"{content_type} untuk module "
+                            f"{module.title} pada course "
+                            f"{module.course.name}."
+                        ),
+                        course_id=module.course,
+                        module=module,
+                        parent_id=None,
+                    )
+                )
+
+        CourseContent.objects.bulk_create(
+            to_create,
+            batch_size=500
+        )
+
+        contents = list(CourseContent.objects.all())
+
+        self.stdout.write(
+            f'  → {len(contents)} konten tersedia'
+        )
+
         return contents
-
+    
     # -------------------------------------------------------------------------
-    # Step 6: Buat 1000+ Comment
+    # Step 8 : Seed Progress Belajar
+    # -------------------------------------------------------------------------
+    def _seed_progress(self, contents, members):
+
+        self.stdout.write("\n[8/11] Membuat Progress Belajar...")
+
+        completions = []
+
+        # Kelompokkan content berdasarkan course
+        contents_by_course = {}
+        for content in contents:
+            contents_by_course.setdefault(content.course_id_id, []).append(content)
+
+        existing = set(
+            CourseContentCompletion.objects.values_list(
+                "member_id_id",
+                "content_id_id"
+            )
+        )
+
+        for member in members:
+
+            course_contents = contents_by_course.get(
+                member.course_id_id,
+                []
+            )
+
+            if not course_contents:
+                continue
+
+            # mahasiswa menyelesaikan 40-90% materi
+            total = len(course_contents)
+
+            completed = random.sample(
+                course_contents,
+                random.randint(
+                    max(1, int(total * 0.4)),
+                    total
+                )
+            )
+
+            for content in completed:
+
+                key = (
+                    member.id,
+                    content.id
+                )
+
+                if key in existing:
+                    continue
+
+                existing.add(key)
+
+                completions.append(
+                    CourseContentCompletion(
+                        member_id=member,
+                        content_id=content,
+                        completed=True,
+                    )
+                )
+
+        if completions:
+
+            CourseContentCompletion.objects.bulk_create(
+                completions,
+                batch_size=500
+            )
+
+        self.stdout.write(
+            f"  → {CourseContentCompletion.objects.count()} progress tersedia"
+        )
+
+        return list(
+            CourseContentCompletion.objects.all()
+        )
+    # -------------------------------------------------------------------------
+    # Step 9 : Buat 1000+ Comment
     # -------------------------------------------------------------------------
     def _seed_comments(self, contents, members):
-        self.stdout.write('\n[6/6] Membuat 1000+ komentar...')
+        self.stdout.write('\n[9/11] Membuat 1000+ komentar...')
 
         existing_count = Comment.objects.count()
         target = 1000 - existing_count
@@ -357,6 +549,92 @@ class Command(BaseCommand):
 
         Comment.objects.bulk_create(to_create, batch_size=500)
         self.stdout.write(f'  → {Comment.objects.count()} komentar tersedia')
+    
+    # -------------------------------------------------------------------------
+    # Step 10 : Seed Review
+    # -------------------------------------------------------------------------
+    def _seed_reviews(self, members):
+
+        self.stdout.write("\n[10/11] Membuat Review Course...")
+
+        reviews = []
+
+        for member in members:
+
+            # Peluang 60% memberi review
+            if random.random() <= 0.6:
+
+                # Hindari review ganda
+                if CourseReview.objects.filter(
+                    course=member.course_id,
+                    user=member.user_id
+                ).exists():
+                    continue
+
+                reviews.append(
+                    CourseReview(
+                        course=member.course_id,
+                        user=member.user_id,
+                        rating=random.randint(3, 5),
+                        review=random.choice(REVIEW_TEXTS)
+                    )
+                )
+
+        if reviews:
+            CourseReview.objects.bulk_create(
+                reviews,
+                batch_size=500
+            )
+
+        self.stdout.write(
+            f"  → {CourseReview.objects.count()} review tersedia"
+        )
+
+        return list(CourseReview.objects.all())
+    
+    # -------------------------------------------------------------------------
+    # Step 11 : Seed Wishlist
+    # -------------------------------------------------------------------------
+    def _seed_wishlist(self, students, courses):
+
+        self.stdout.write("\n[11/11] Membuat Wishlist...")
+
+        wishlists = []
+
+        for student in students:
+
+            # setiap mahasiswa memilih 3–5 course favorit
+            favorites = random.sample(
+                courses,
+                random.randint(3, 5)
+            )
+
+            for course in favorites:
+
+                if CourseWishlist.objects.filter(
+                    user=student,
+                    course=course
+                ).exists():
+                    continue
+
+                wishlists.append(
+                    CourseWishlist(
+                        user=student,
+                        course=course
+                    )
+                )
+
+        if wishlists:
+            CourseWishlist.objects.bulk_create(
+                wishlists,
+                batch_size=500
+            )
+
+        self.stdout.write(
+            f"  → {CourseWishlist.objects.count()} wishlist tersedia"
+        )
+
+        return list(CourseWishlist.objects.all())
 
     # -------------------------------------------------------------------------
     # Summary
@@ -374,6 +652,11 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'  Course          : {Course.objects.count()}')
         self.stdout.write(f'  CourseMember    : {CourseMember.objects.count()}')
+        self.stdout.write(f"  Category        : {Category.objects.count()}")
+        self.stdout.write(f"  CourseModule    : {CourseModule.objects.count()}")
+        self.stdout.write(f"  Course Review   : {CourseReview.objects.count()}")
+        self.stdout.write(f"  Course Wishlist : {CourseWishlist.objects.count()}")
         self.stdout.write(f'  CourseContent   : {CourseContent.objects.count()}')
+        self.stdout.write(f"  Progress        : {CourseContentCompletion.objects.count()}")
         self.stdout.write(f'  Comment         : {Comment.objects.count()}')
         self.stdout.write(self.style.HTTP_INFO('-' * 55))

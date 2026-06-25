@@ -8,7 +8,7 @@ import hashlib
 import json
 from django.utils import timezone
 
-from courses.models import Course, CourseMember, CourseContent, CourseContentCompletion
+from courses.models import Course, CourseMember, CourseContent, CourseContentCompletion, Category, CourseReview,CourseWishlist,CourseModule
 from courses.schemas import *
 from courses.auth import auth, create_token, decode_token
 from courses.permissions import *
@@ -109,21 +109,85 @@ def update_me(request, data: ProfileUpdateIn):
     user.save()
     return user_dict(user)
 
+# ================= INSTRUCTORS =================
 
+@api.get(
+    "/instructors",
+    response=List[InstructorOut],
+    summary="Daftar Dosen"
+)
+def list_instructors(request):
+
+    instructors = User.objects.filter(
+        groups__name="instructor"
+    )
+
+    return [
+        {
+            "id": user.id,
+            "username": user.username,
+            "full_name": f"{user.first_name} {user.last_name}".strip()
+        }
+        for user in instructors
+    ]
 # ================= COURSES =================
 
-@api.get("/courses")
-def list_courses(request, search: Optional[str] = None):
+@api.get("/courses", summary="Pencarian dan Filter Course",)
+def list_courses(
+    request,
+    search: Optional[str] = None,
+    category: Optional[int] = None,
+    teacher: Optional[int] = None,
+    sort: Optional[str] = None,
+    level: Optional[str] = None,
+    status: Optional[str] = None,
+):
     qs = Course.objects.all()
 
     if search:
         qs = qs.filter(name__icontains=search)
+
+    if category:
+        qs = qs.filter(category_id=category)
+
+    if teacher:
+        qs = qs.filter(teacher_id=teacher)
+
+    if sort:
+        allowed = [
+            "price",
+            "-price",
+            "created_at",
+            "-created_at",
+        ]
+
+        if sort in allowed:
+            qs = qs.order_by(sort)
+    
+    if level:
+        qs = qs.filter(level=level)
+
+    if status:
+        qs = qs.filter(status=status)
 
     return {
         "count": qs.count(),
         "results": [CourseOut.from_orm(c) for c in qs],
     }
 
+@api.get( "/courses/recommendations", auth=auth, response=List[CourseOut], summary="Rekomendasi Course")
+def recommendations(request):
+
+    enrolled = CourseMember.objects.filter(
+        user_id=request.auth
+    ).values_list(
+        "course_id",
+        flat=True
+    )
+
+    return Course.objects.exclude(
+        id__in=enrolled
+    ).order_by("-created_at")[:5]
 
 @api.get("/courses/{id}")
 def detail_course(request, id: int):
@@ -144,6 +208,9 @@ def create_course(request, data: CourseIn):
         name=data.name,
         description=data.description,
         price=data.price,
+        category_id=data.category_id,
+        level=data.level,
+        status=data.status,
         teacher=request.auth,
     )
     cache.delete_pattern("courses:list:*")
@@ -162,6 +229,15 @@ def update_course(request, id: int, data: CoursePatchIn):
         course.description = data.description
     if data.price:
         course.price = data.price
+    
+    if data.category_id is not None:
+        course.category_id = data.category_id
+
+    if data.level is not None:
+        course.level = data.level
+
+    if data.status is not None:
+        course.status = data.status
 
     course.save()
 
@@ -184,6 +260,44 @@ def delete_course(request, id: int):
     course.delete()
 
     return {"success": True}
+
+# ================= CATEGORIES =================
+
+@api.get("/categories", response=List[CategoryOut])
+def list_categories(request):
+    return Category.objects.all()
+
+
+@api.post("/categories", auth=auth, response=CategoryOut)
+def create_category(request, data: CategoryIn):
+    is_admin(request.auth)
+
+    category = Category.objects.create(
+        name=data.name,
+        description=data.description,
+    )
+
+    return category
+
+# ================= MODULES =================
+
+@api.get("/modules", response=List[ModuleOut], summary="Daftar Module Course")
+def list_modules(request):
+    return CourseModule.objects.prefetch_related("contents").select_related("course")
+
+@api.post( "/modules", auth=auth, response=ModuleOut)
+def create_module(request, data: ModuleIn):
+
+    is_instructor(request.auth)
+
+    module = CourseModule.objects.create(
+        course_id=data.course_id,
+        title=data.title,
+        description=data.description,
+        order=data.order,
+    )
+
+    return module
 
 
 # ================= ENROLLMENTS =================
@@ -223,6 +337,36 @@ def progress(request, id: int, data: ProgressIn):
     )
     return CourseContentCompletionOut.from_orm(completion)
 
+# ================= REVIEWS =================
+
+@api.post("/courses/{id}/reviews", auth=auth, response=ReviewOut, summary="Memberikan Review Course")
+def create_review(request, id: int, data: ReviewIn):
+
+    course = get_object_or_404(Course, id=id)
+
+    review, created = CourseReview.objects.update_or_create(
+        course=course,
+        user=request.auth,
+        defaults={
+            "rating": data.rating,
+            "review": data.review,
+        }
+    )
+
+    return review
+
+
+@api.get( "/courses/{id}/reviews", response=List[ReviewOut])
+def list_reviews(request, id: int):
+
+    course = get_object_or_404(
+        Course,
+        id=id
+    )
+
+    return CourseReview.objects.filter(
+        course=course
+    )
 
 # ================= ADVANCED FEATURES (REDIS, MONGODB, CELERY) =================
 
@@ -371,3 +515,112 @@ def trigger_stats(request):
     is_admin(request.auth)
     update_course_statistics.delay()
     return {"message": "Statistics update task has been queued."}
+
+# ================= WISHLIST =================
+
+@api.post( "/courses/{id}/wishlist", auth=auth, response=WishlistOut, summary="Tambah Wishlist")
+def add_wishlist(request, id: int):
+
+    course = get_object_or_404(
+        Course,
+        id=id
+    )
+
+    wishlist, _ = CourseWishlist.objects.get_or_create(
+        course=course,
+        user=request.auth,
+    )
+
+    return wishlist
+
+
+@api.delete("/courses/{id}/wishlist", auth=auth)
+def remove_wishlist(request, id: int):
+
+    CourseWishlist.objects.filter(
+        course_id=id,
+        user=request.auth,
+    ).delete()
+
+    return {"success": True}
+
+
+@api.get( "/wishlist", auth=auth, response=List[WishlistOut])
+def my_wishlist(request):
+
+    return CourseWishlist.objects.filter(
+        user=request.auth
+    )
+
+@api.get( "/courses/{id}/progress", auth=auth, response=CourseProgressOut)
+def course_progress(request, id: int):
+
+    course = get_object_or_404(
+        Course,
+        id=id
+    )
+
+    total_contents = CourseContent.objects.filter(
+        course_id=course
+    ).count()
+
+    completed_contents = CourseContentCompletion.objects.filter(
+        member_id__user_id=request.auth,
+        content_id__course_id=course,
+    ).count()
+
+    percentage = 0
+
+    if total_contents > 0:
+        percentage = round(
+            (completed_contents / total_contents) * 100,
+            2
+        )
+
+    return {
+        "course_id": course.id,
+        "total_contents": total_contents,
+        "completed_contents": completed_contents,
+        "progress_percentage": percentage,
+    }
+
+# ================= DASHBOARD =================
+
+@api.get("/dashboard", auth=auth, response=DashboardOut, summary="Dashboard Mahasiswa")
+def dashboard(request):
+
+    members = CourseMember.objects.filter(user_id=request.auth)
+    active_courses = members.count()
+    progress_list = []
+    for member in members:
+
+        total_contents = CourseContent.objects.filter(course_id=member.course_id).count()
+        completed_contents = CourseContentCompletion.objects.filter(member_id=member).count()
+        percentage = 0
+        if total_contents > 0:
+            percentage = round((completed_contents / total_contents) * 100, 2)
+
+        progress_list.append({
+            "course_id": member.course_id.id,
+            "course_name": member.course_id.name,
+            "progress_percentage": percentage,
+        })
+
+    enrolled_courses = members.values_list(
+        "course_id",
+        flat=True
+    )
+
+    recommended = Course.objects.exclude(
+        id__in=enrolled_courses
+    ).filter(
+        status="published"
+    ).order_by(
+        "-created_at"
+    )[:5]
+
+    return {
+        "active_courses": active_courses,
+        "my_course_progress": progress_list,
+        "recommended_courses": recommended,
+    }
