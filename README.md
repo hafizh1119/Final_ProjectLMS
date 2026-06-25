@@ -97,17 +97,20 @@ Migration akan membuat seluruh tabel yang diperlukan pada database PostgreSQL.
 
 ---
 
-### 4. Membuat Superuser (Opsional)
+### 4. Membuat Superuser
 
-Apabila ingin mengakses Django Admin.
+Buat akun **Admin** untuk mengakses Django Admin dengan menjalankan perintah berikut.
 
 ```bash
 docker exec -it lms-app python manage.py createsuperuser
 ```
 
-Masukkan username, email, dan password sesuai kebutuhan.
+Gunakan kredensial berikut:
 
----
+| Username | Password      |
+| -------- | ------------- |
+| `admin`  | `password123` |
+
 
 ### 5. Menjalankan Seeder
 
@@ -136,3 +139,41 @@ Seluruh endpoint REST API dapat langsung diuji melalui halaman Swagger/OpenAPI.
 ### 7. Login Menggunakan Akun Seeder
 
 Gunakan salah satu akun yang dibuat oleh seeder atau akun superuser untuk mencoba seluruh fitur sesuai hak akses **Admin**, **Instructor**, maupun **Student**.
+
+## Akun Demo
+
+Seeder akan membuat akun demo dengan kredensial berikut.
+
+| Role       | Username                                                             | Password                                               |
+| ---------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
+| Admin      | `admin` *(akun superuser yang dibuat dengan `createsuperuser`)*      | `password123`                                          |
+| Instructor | `dosen01` – `dosen20`                                                | `password123`                                          |
+| Student    | `mhs001` – `mhs080`                                                  | `password123`                                          |
+
+> **Catatan:** Akun **Admin** dibuat menggunakan perintah `python manage.py createsuperuser`, sedangkan akun **Instructor** dan **Student** otomatis dibuat melalui perintah `python manage.py seed_data`.
+
+## Endpoint Penting
+
+Berikut merupakan endpoint utama yang digunakan untuk menguji seluruh fitur pada project **Simple-LMS**.
+
+| Method     | Endpoint                         | Deskripsi                                                                                                |
+| ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **POST**   | `/api/auth/register`             | Registrasi pengguna baru.                                                                                |
+| **POST**   | `/api/auth/login`                | Login dan mendapatkan JWT Access Token serta Refresh Token.                                              |
+| **GET**    | `/api/auth/me`                   | Menampilkan informasi pengguna yang sedang login.                                                        |
+| **GET**    | `/api/courses`                   | Menampilkan daftar course beserta fitur search, filter, dan sorting.                                     |
+| **POST**   | `/api/courses`                   | Menambahkan course baru.                                                                                 |
+| **GET**    | `/api/courses/{id}`              | Menampilkan detail course.                                                                               |
+| **GET**    | `/api/modules`                   | Menampilkan curriculum course berupa module beserta content.                                             |
+| **POST**   | `/api/modules`                   | Menambahkan module pada course.                                                                          |
+| **POST**   | `/api/enrollments`               | Melakukan enrollment (mendaftar) ke course.                                                              |
+| **GET**    | `/api/enrollments/my-courses`    | Menampilkan daftar course yang telah diikuti oleh student.                                               |
+| **POST**   | `/api/enrollments/{id}/progress` | Menandai content sebagai selesai dipelajari.                                                             |
+| **GET**    | `/api/courses/{id}/progress`     | Menampilkan progress belajar pada suatu course.                                                          |
+| **POST**   | `/api/courses/{id}/reviews`      | Memberikan rating dan review pada course.                                                                |
+| **GET**    | `/api/courses/{id}/reviews`      | Menampilkan daftar review suatu course.                                                                  |
+| **POST**   | `/api/courses/{id}/wishlist`     | Menambahkan course ke wishlist.                                                                          |
+| **DELETE** | `/api/courses/{id}/wishlist`     | Menghapus course dari wishlist.                                                                          |
+| **GET**    | `/api/wishlist`                  | Menampilkan daftar course favorit (wishlist).                                                            |
+| **GET**    | `/api/dashboard`                 | Menampilkan dashboard mahasiswa yang berisi course aktif, progress pembelajaran, dan rekomendasi course. |
+
