@@ -63,8 +63,8 @@ Dashboard mahasiswa menampilkan informasi ringkas mengenai **jumlah course aktif
 Clone repository ke komputer lokal.
 
 ```bash
-git clone <repository-url>
-cd Simple-LMS---Advanced-Features-Integration
+git clone https://github.com/hafizh1119/Final_ProjectLMS
+cd Final_ProjectLMS
 ```
 
 ---
@@ -227,5 +227,62 @@ Berikut merupakan endpoint utama yang digunakan untuk menguji seluruh fitur pada
 | Method | Endpoint         | Deskripsi                                                                          |
 | ------ | ---------------- | ---------------------------------------------------------------------------------- |
 | GET    | `/api/dashboard` | Menampilkan ringkasan course aktif, progress pembelajaran, dan rekomendasi course. |
+
+## Bukti Pengujian
+
+1. Docker Compose - Menjalankan seluruh service menggunakan Docker Compose.
+
+```bash
+docker compose up --build -d
+```
+![Docker Compose](doc/docker-compose.png)
+
+```bash
+docker ps
+```
+
+![Docker PS](doc/docker-ps.png)
+
+2. Database Migration
+
+```bash
+docker exec -it lms-app python manage.py migrate
+```
+
+![Migration](doc/migrate.png)
+
+3. Mmebuat Super User
+
+```bash
+docker exec -it lms-app python manage.py createsuperuser
+```
+
+![Super User](doc/create-super-user.png)
+
+4. Seeder
+
+```bash
+docker exec -it lms-app python manage.py seed_data
+```
+
+![Seeder](doc/seeder.png)
+
+5. Authentication JWT
+
+Register :
+
+![Register](doc/register.png)
+
+login :
+
+![Login](doc/login.png)
+
+refresh :
+
+![Refresh](doc/refresh.png)
+
+me :
+
+![Me](doc/me.png)
 
 

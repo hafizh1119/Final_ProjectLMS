@@ -175,20 +175,6 @@ def list_courses(
         "results": [CourseOut.from_orm(c) for c in qs],
     }
 
-@api.get( "/courses/recommendations", auth=auth, response=List[CourseOut], summary="Rekomendasi Course")
-def recommendations(request):
-
-    enrolled = CourseMember.objects.filter(
-        user_id=request.auth
-    ).values_list(
-        "course_id",
-        flat=True
-    )
-
-    return Course.objects.exclude(
-        id__in=enrolled
-    ).order_by("-created_at")[:5]
-
 @api.get("/courses/{id}")
 def detail_course(request, id: int):
     cache_key = f"course:{id}"
@@ -299,6 +285,27 @@ def create_module(request, data: ModuleIn):
 
     return module
 
+# ================= CONTENT =================
+
+@api.get("/lessons", response=List[ContentOut],summary="Daftar Lesson")
+def list_contents(request):
+    return CourseContent.objects.select_related("course_id", "module")
+
+
+@api.post("/lessons", auth=auth, response=ContentOut, summary="Create Lesson")
+def create_content(request, data: ContentIn):
+
+    is_instructor(request.auth)
+    module = get_object_or_404(CourseModule, id=data.module_id)
+    content = CourseContent.objects.create(
+        course_id=module.course,
+        module=module,
+        name=data.name,
+        description=data.description,
+        video_url=data.video_url,
+    )
+
+    return content
 
 # ================= ENROLLMENTS =================
 

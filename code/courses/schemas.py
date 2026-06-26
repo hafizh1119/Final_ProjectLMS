@@ -120,6 +120,33 @@ class ModuleOut(Schema):
     def resolve_contents(obj):
         return obj.contents.all()
 
+class ContentIn(Schema):
+    module_id: int
+    name: str
+    description: Optional[str] = "-"
+    video_url: Optional[str] = None
+
+
+class ContentOut(Schema):
+    id: int
+
+    module_id: int
+    course_id: int
+
+    name: str
+    description: str
+    video_url: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+    @staticmethod
+    def resolve_module_id(obj):
+        return obj.module.id
+
+    @staticmethod
+    def resolve_course_id(obj):
+        return obj.course_id.id
 
 class CourseOut(Schema):
     id: int
