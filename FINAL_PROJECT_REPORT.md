@@ -354,49 +354,9 @@ GET /api/auth/me
 
 ## 6. Role-Based Access Control (RBAC)
 
-Project menerapkan **Role-Based Access Control (RBAC)** dengan tiga peran pengguna, yaitu **Admin**, **Instructor**, dan **Student**. Setiap endpoint melakukan validasi role sehingga hanya pengguna yang memiliki hak akses yang dapat menjalankan operasi tertentu.
+Project menerapkan **Role-Based Access Control (RBAC)** dengan tiga peran pengguna, yaitu **Admin**, **Instructor**, dan **Student**. Setiap role hanya dapat mengakses endpoint sesuai hak akses yang telah ditentukan.
 
-### 6.1 Instructor
-
-Instructor dapat membuat course dan lesson.
-
-**Endpoint**
-
-```http
-POST /api/courses
-```
-
-**Hasil**
-
-![Instructor Create Course](doc/instructor-create-course.png)
-
----
-
-### 6.2 Student
-
-Student tidak diperbolehkan membuat course maupun lesson. Ketika Student mencoba mengakses endpoint khusus Instructor, sistem akan mengembalikan respons **403 Forbidden**.
-
-**Endpoint**
-
-```http
-POST /api/courses
-```
-
-**Hasil**
-
-![Student Forbidden](doc/student-forbidden-course.png)
-
-Response:
-
-```json
-{
-    "detail": "Instructor only"
-}
-```
-
----
-
-### 6.3 Admin
+### 6.1 Admin
 
 Admin memiliki hak akses terhadap endpoint administrasi.
 
@@ -408,6 +368,74 @@ POST /api/admin/update-stats
 
 **Hasil**
 
-![Admin Endpoint](doc/admin-update-stats.png)
+Admin berhasil mengakses endpoint administrasi dan sistem mengembalikan respons bahwa proses pembaruan statistik telah dimasukkan ke dalam antrean (queue).
 
+![RBAC Admin](doc/RBAC-admin.png)
 
+---
+
+### 6.2 Instructor
+
+Instructor memiliki hak untuk membuat course.
+
+**Endpoint**
+
+```http
+POST /api/courses
+```
+
+**Hasil Berhasil**
+
+Instructor berhasil membuat course baru.
+
+![Instructor Berhasil](doc/RBAC-InstructorBerhasil.png)
+
+**Hasil Ditolak**
+
+Ketika Instructor mencoba mengakses endpoint yang hanya diperuntukkan bagi Admin, sistem mengembalikan **403 Forbidden** dengan pesan **"Admin only"**.
+
+**Endpoint**
+
+```http
+POST /api/admin/update-stats
+```
+
+![Instructor Gagal](doc/RBAC-InstructorGagal.png)
+
+---
+
+### 6.3 Student
+
+Student dapat mengakses fitur pembelajaran miliknya, seperti daftar course yang telah diikuti.
+
+**Endpoint**
+
+```http
+GET /api/enrollments/my-courses
+```
+
+**Hasil Berhasil**
+
+Student berhasil melihat daftar course yang telah diikuti.
+
+![Student Berhasil](doc/RBAC-StudentBerhasil.png)
+
+**Hasil Ditolak**
+
+Student tidak diperbolehkan membuat course. Ketika mencoba mengakses endpoint khusus Instructor, sistem mengembalikan **403 Forbidden** dengan pesan **"Instructor only"**.
+
+**Endpoint**
+
+```http
+POST /api/courses
+```
+
+![Student Gagal](doc/RBAC-StudentGagal.png)
+
+Response:
+
+```json
+{
+    "detail": "Instructor only"
+}
+```
