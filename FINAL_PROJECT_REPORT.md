@@ -352,5 +352,62 @@ GET /api/auth/me
 
 ![Me](doc/me.png)
 
+## 6. Role-Based Access Control (RBAC)
+
+Project menerapkan **Role-Based Access Control (RBAC)** dengan tiga peran pengguna, yaitu **Admin**, **Instructor**, dan **Student**. Setiap endpoint melakukan validasi role sehingga hanya pengguna yang memiliki hak akses yang dapat menjalankan operasi tertentu.
+
+### 6.1 Instructor
+
+Instructor dapat membuat course dan lesson.
+
+**Endpoint**
+
+```http
+POST /api/courses
+```
+
+**Hasil**
+
+![Instructor Create Course](doc/instructor-create-course.png)
+
+---
+
+### 6.2 Student
+
+Student tidak diperbolehkan membuat course maupun lesson. Ketika Student mencoba mengakses endpoint khusus Instructor, sistem akan mengembalikan respons **403 Forbidden**.
+
+**Endpoint**
+
+```http
+POST /api/courses
+```
+
+**Hasil**
+
+![Student Forbidden](doc/student-forbidden-course.png)
+
+Response:
+
+```json
+{
+    "detail": "Instructor only"
+}
+```
+
+---
+
+### 6.3 Admin
+
+Admin memiliki hak akses terhadap endpoint administrasi.
+
+**Endpoint**
+
+```http
+POST /api/admin/update-stats
+```
+
+**Hasil**
+
+![Admin Endpoint](doc/admin-update-stats.png)
 
 
