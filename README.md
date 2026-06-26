@@ -56,25 +56,13 @@ docker ps
 docker exec -it lms-app python manage.py migrate
 ```
 
-### 4. Membuat Superuser
-
-```bash
-docker exec -it lms-app python manage.py createsuperuser
-```
-
-Gunakan akun berikut.
-
-| Username | Password      |
-| -------- | ------------- |
-| `admin`  | `password123` |
-
-### 5. Jalankan Seeder
+### 4. Jalankan Seeder
 
 ```bash
 docker exec -it lms-app python manage.py seed_data
 ```
 
-### 6. Akses Swagger
+### 5. Akses Swagger
 
 ```
 http://localhost:8000/api/docs
@@ -86,7 +74,7 @@ http://localhost:8000/api/docs
 
 | Role       | Username              | Password      |
 | ---------- | --------------------- | ------------- |
-| Admin      | `admin`               | `password123` |
+| Admin      | `admin1` - `admin5`   | `password123` |
 | Instructor | `dosen01` – `dosen20` | `password123` |
 | Student    | `mhs001` – `mhs080`   | `password123` |
 
