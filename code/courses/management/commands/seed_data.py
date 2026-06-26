@@ -21,7 +21,7 @@ Referensi: Modul 05 - Bagian 6: Bulk Operations
 import random
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from courses.models import Category, Course, CourseModule, CourseMember, CourseContent, CourseContentCompletion, CourseReview, CourseWishlist, Comment
 
 
@@ -158,6 +158,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO('  Seeding Data - Lab 05: Optimasi Database'))
         self.stdout.write(self.style.HTTP_INFO('=' * 55))
 
+        admins = self._seed_admin()
         teachers = self._seed_teachers()
         students = self._seed_students()
         categories = self._seed_categories()
@@ -178,10 +179,43 @@ class Command(BaseCommand):
         self.stdout.write('  http://localhost:8000/admin/            ← manajemen data')
 
     # -------------------------------------------------------------------------
-    # Step 1: Buat 20 User pengajar
+    # Step 1 : Buat 5 Admin
+    # -------------------------------------------------------------------------
+    def _seed_admin(self):
+
+        self.stdout.write("\n[1/12] Membuat admin...")
+
+        admins = []
+
+        for i in range(1, 6):
+
+            username = f"admin{i}"
+
+            admin, _ = User.objects.get_or_create(
+                username=username,
+                defaults={
+                    "email": f"{username}@lms.com",
+                    "first_name": "Admin",
+                    "last_name": str(i),
+                    "is_staff": True,
+                    "is_superuser": True,
+                    "password": make_password("password123"),
+                }
+            )
+
+            admins.append(admin)
+
+        self.stdout.write(
+            f"  → {len(admins)} admin tersedia"
+        )
+
+        return admins
+
+    # -------------------------------------------------------------------------
+    # Step 2: Buat 20 User pengajar
     # -------------------------------------------------------------------------
     def _seed_teachers(self):
-        self.stdout.write('\n[1/11] Membuat pengajar (dosen01 - dosen20)...')
+        self.stdout.write('\n[2/12] Membuat pengajar (dosen01 - dosen20)...')
 
         existing = set(
             User.objects.filter(username__startswith='dosen')
@@ -209,14 +243,16 @@ class Command(BaseCommand):
             User.objects.bulk_create(to_create, ignore_conflicts=True)
 
         teachers = list(User.objects.filter(username__startswith='dosen'))
+        instructor_group, _ = Group.objects.get_or_create(name="instructor")
+        for teacher in teachers: teacher.groups.add(instructor_group)
         self.stdout.write(f'  → {len(teachers)} pengajar tersedia')
         return teachers
 
     # -------------------------------------------------------------------------
-    # Step 2: Buat 80 User mahasiswa
+    # Step 3: Buat 80 User mahasiswa
     # -------------------------------------------------------------------------
     def _seed_students(self):
-        self.stdout.write('\n[2/11] Membuat mahasiswa (mhs001 - mhs080)...')
+        self.stdout.write('\n[3/12] Membuat mahasiswa (mhs001 - mhs080)...')
 
         existing = set(
             User.objects.filter(username__startswith='mhs')
@@ -239,14 +275,16 @@ class Command(BaseCommand):
             User.objects.bulk_create(to_create, ignore_conflicts=True)
 
         students = list(User.objects.filter(username__startswith='mhs'))
+        student_group, _ = Group.objects.get_or_create(name="student")
+        for student in students: student.groups.add(student_group)
         self.stdout.write(f'  → {len(students)} mahasiswa tersedia')
         return students
 
     # -------------------------------------------------------------------------
-    # Step 3: Buat Category
+    # Step 4: Buat Category
     # -------------------------------------------------------------------------
     def _seed_categories(self):
-        self.stdout.write("\n[3/11] Membuat kategori...")
+        self.stdout.write("\n[4/12] Membuat kategori...")
 
         categories = [
             ("Programming", "Programming Course"),
@@ -271,10 +309,10 @@ class Command(BaseCommand):
         return list(Category.objects.all())
     
     # -------------------------------------------------------------------------
-    # Step 4: Buat 100 Course
+    # Step 5: Buat 100 Course
     # -------------------------------------------------------------------------
     def _seed_courses(self, teachers, categories):
-        self.stdout.write('\n[4/11] Membuat 100 mata kuliah...')
+        self.stdout.write('\n[5/12] Membuat 100 mata kuliah...')
 
         existing_count = Course.objects.count()
         to_create = []
@@ -314,13 +352,13 @@ class Command(BaseCommand):
         return courses
     
     # -------------------------------------------------------------------------
-    # Step 5: Buat Module
+    # Step 6: Buat Module
     # -------------------------------------------------------------------------
     def _seed_modules(self, courses):
         if CourseModule.objects.exists():
             self.stdout.write(f"  → {CourseModule.objects.count()} module tersedia (skip)")
             return list(CourseModule.objects.all())
-        self.stdout.write("\n[5/11] Membuat module...")
+        self.stdout.write("\n[6/12] Membuat module...")
 
         modules = []
 
@@ -347,10 +385,10 @@ class Command(BaseCommand):
         return list(CourseModule.objects.all())
     
     # -------------------------------------------------------------------------
-    # Step 6: Buat 500 CourseMember
+    # Step 7: Buat 500 CourseMember
     # -------------------------------------------------------------------------
     def _seed_members(self, courses, students):
-        self.stdout.write('\n[6/11] Membuat 500 anggota kelas...')
+        self.stdout.write('\n[7/12] Membuat 500 anggota kelas...')
 
         existing_count = CourseMember.objects.count()
         # Buat set pasangan (course_id, user_id) yang sudah ada untuk cek duplikat
@@ -385,10 +423,10 @@ class Command(BaseCommand):
         return members
 
     # -------------------------------------------------------------------------
-    # Step 7: Buat 900 CourseContent (3 content setiap module)
+    # Step 8: Buat 900 CourseContent (3 content setiap module)
     # -------------------------------------------------------------------------
     def _seed_contents(self, modules):
-        self.stdout.write('\n[7/11] Membuat 900 konten kelas...')
+        self.stdout.write('\n[8/12] Membuat 900 konten kelas...')
 
         if CourseContent.objects.exists():
             contents = list(CourseContent.objects.all())
@@ -437,11 +475,11 @@ class Command(BaseCommand):
         return contents
     
     # -------------------------------------------------------------------------
-    # Step 8 : Seed Progress Belajar
+    # Step 9 : Seed Progress Belajar
     # -------------------------------------------------------------------------
     def _seed_progress(self, contents, members):
 
-        self.stdout.write("\n[8/11] Membuat Progress Belajar...")
+        self.stdout.write("\n[9/12] Membuat Progress Belajar...")
 
         completions = []
 
@@ -513,10 +551,10 @@ class Command(BaseCommand):
             CourseContentCompletion.objects.all()
         )
     # -------------------------------------------------------------------------
-    # Step 9 : Buat 1000+ Comment
+    # Step 10 : Buat 1000+ Comment
     # -------------------------------------------------------------------------
     def _seed_comments(self, contents, members):
-        self.stdout.write('\n[9/11] Membuat 1000+ komentar...')
+        self.stdout.write('\n[10/12] Membuat 1000+ komentar...')
 
         existing_count = Comment.objects.count()
         target = 1000 - existing_count
@@ -551,11 +589,11 @@ class Command(BaseCommand):
         self.stdout.write(f'  → {Comment.objects.count()} komentar tersedia')
     
     # -------------------------------------------------------------------------
-    # Step 10 : Seed Review
+    # Step 11 : Seed Review
     # -------------------------------------------------------------------------
     def _seed_reviews(self, members):
 
-        self.stdout.write("\n[10/11] Membuat Review Course...")
+        self.stdout.write("\n[11/12] Membuat Review Course...")
 
         reviews = []
 
@@ -593,11 +631,11 @@ class Command(BaseCommand):
         return list(CourseReview.objects.all())
     
     # -------------------------------------------------------------------------
-    # Step 11 : Seed Wishlist
+    # Step 12 : Seed Wishlist
     # -------------------------------------------------------------------------
     def _seed_wishlist(self, students, courses):
 
-        self.stdout.write("\n[11/11] Membuat Wishlist...")
+        self.stdout.write("\n[12/12] Membuat Wishlist...")
 
         wishlists = []
 
@@ -644,12 +682,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO('-' * 55))
         self.stdout.write(self.style.HTTP_INFO('  Ringkasan Data'))
         self.stdout.write(self.style.HTTP_INFO('-' * 55))
-        self.stdout.write(
-            f"  User pengajar   : {User.objects.filter(username__startswith='dosen').count()}"
-        )
-        self.stdout.write(
-            f"  User mahasiswa  : {User.objects.filter(username__startswith='mhs').count()}"
-        )
+        self.stdout.write(f"  Admin           : {User.objects.filter(is_superuser=True).count()}")
+        self.stdout.write(f"  User pengajar   : {User.objects.filter(username__startswith='dosen').count()}")
+        self.stdout.write(f"  User mahasiswa  : {User.objects.filter(username__startswith='mhs').count()}")
         self.stdout.write(f'  Course          : {Course.objects.count()}')
         self.stdout.write(f'  CourseMember    : {CourseMember.objects.count()}')
         self.stdout.write(f"  Category        : {Category.objects.count()}")

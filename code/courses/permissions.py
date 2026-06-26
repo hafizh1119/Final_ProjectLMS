@@ -5,9 +5,11 @@ def get_role(user):
     if user.is_superuser:
         return "admin"
 
-    # Cek group "instructor" ATAU "teacher"
-    if user.groups.filter(name="instructor").exists() or user.groups.filter(name="teacher").exists():
+    if user.groups.filter(name="instructor").exists():
         return "instructor"
+
+    if user.groups.filter(name="student").exists():
+        return "student"
 
     return "student"
 
