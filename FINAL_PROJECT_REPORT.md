@@ -97,22 +97,7 @@ Migration akan membuat seluruh tabel yang diperlukan pada database PostgreSQL.
 
 ---
 
-### 4. Membuat Superuser
-
-Buat akun **Admin** untuk mengakses Django Admin dengan menjalankan perintah berikut.
-
-```bash
-docker exec -it lms-app python manage.py createsuperuser
-```
-
-Gunakan kredensial berikut:
-
-| Username | Password      |
-| -------- | ------------- |
-| `admin`  | `password123` |
-
-
-### 5. Menjalankan Seeder
+### 4. Menjalankan Seeder
 
 Isi database dengan data awal (teacher, student, category, course, module, content, enrollment, review, wishlist, dan progress).
 
@@ -124,7 +109,7 @@ Seeder akan membuat data dummy sehingga seluruh fitur dapat langsung diuji melal
 
 ---
 
-### 6. Akses Swagger/OpenAPI
+### 5. Akses Swagger/OpenAPI
 
 Setelah seluruh proses selesai, dokumentasi API dapat diakses melalui browser.
 
@@ -136,7 +121,7 @@ Seluruh endpoint REST API dapat langsung diuji melalui halaman Swagger/OpenAPI.
 
 ---
 
-### 7. Login Menggunakan Akun Seeder
+### 6. Login Menggunakan Akun Seeder
 
 Gunakan salah satu akun yang dibuat oleh seeder atau akun superuser untuk mencoba seluruh fitur sesuai hak akses **Admin**, **Instructor**, maupun **Student**.
 
@@ -146,11 +131,10 @@ Seeder akan membuat akun demo dengan kredensial berikut.
 
 | Role       | Username                                                             | Password                                               |
 | ---------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
-| Admin      | `admin` *(akun superuser yang dibuat dengan `createsuperuser`)*      | `password123`                                          |
+| Admin      | `admin1` - `admin5`                                                  | `password123`                                          |
 | Instructor | `dosen01` – `dosen20`                                                | `password123`                                          |
 | Student    | `mhs001` – `mhs080`                                                  | `password123`                                          |
 
-> **Catatan:** Akun **Admin** dibuat menggunakan perintah `python manage.py createsuperuser`, sedangkan akun **Instructor** dan **Student** otomatis dibuat melalui perintah `python manage.py seed_data`.
 
 ## Endpoint Penting
 
