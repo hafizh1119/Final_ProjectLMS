@@ -141,4 +141,4 @@ http://localhost:8000/api/docs
 
 # Dokumentasi Lengkap
 
-Dokumentasi implementasi, pengujian, dan screenshot dapat dilihat pada file **FINAL_PROJECT_REPORT.md**.
+Dokumentasi implementasi, pengujian, dan screenshot dapat dilihat pada file [FINAL_PROJECT_REPORT.md](FINAL_PROJECT_REPORT.md).
