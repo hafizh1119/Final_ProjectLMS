@@ -228,61 +228,129 @@ Berikut merupakan endpoint utama yang digunakan untuk menguji seluruh fitur pada
 | ------ | ---------------- | ---------------------------------------------------------------------------------- |
 | GET    | `/api/dashboard` | Menampilkan ringkasan course aktif, progress pembelajaran, dan rekomendasi course. |
 
-## Bukti Pengujian
+# Bukti Pengujian
 
-1. Docker Compose - Menjalankan seluruh service menggunakan Docker Compose.
+## 1. Docker Compose
+
+Menjalankan seluruh service menggunakan Docker Compose.
 
 ```bash
 docker compose up --build -d
 ```
+
+**Hasil Docker Compose**
+
 ![Docker Compose](doc/docker-compose.png)
+
+Memastikan seluruh container berhasil berjalan.
 
 ```bash
 docker ps
 ```
 
+**Hasil Docker PS**
+
 ![Docker PS](doc/docker-ps.png)
 
-2. Database Migration
+---
+
+## 2. Database Migration
+
+Melakukan migrasi database PostgreSQL.
 
 ```bash
 docker exec -it lms-app python manage.py migrate
 ```
 
+**Hasil Migration**
+
 ![Migration](doc/migrate.png)
 
-3. Mmebuat Super User
+---
+
+## 3. Membuat Superuser
+
+Membuat akun administrator untuk mengakses Django Admin.
 
 ```bash
 docker exec -it lms-app python manage.py createsuperuser
 ```
 
+**Hasil Pembuatan Superuser**
+
 ![Super User](doc/create-super-user.png)
 
-4. Seeder
+---
+
+## 4. Seeder
+
+Mengisi database dengan data awal (dummy data).
 
 ```bash
 docker exec -it lms-app python manage.py seed_data
 ```
 
+**Hasil Seeder**
+
 ![Seeder](doc/seeder.png)
 
-5. Authentication JWT
+---
 
-Register :
+## 5. Authentication JWT
+
+### Register
+
+Endpoint:
+
+```http
+POST /api/auth/register
+```
+
+**Hasil Register**
 
 ![Register](doc/register.png)
 
-login :
+---
+
+### Login
+
+Endpoint:
+
+```http
+POST /api/auth/login
+```
+
+**Hasil Login**
 
 ![Login](doc/login.png)
 
-refresh :
+---
+
+### Refresh Token
+
+Endpoint:
+
+```http
+POST /api/auth/refresh
+```
+
+**Hasil Refresh Token**
 
 ![Refresh](doc/refresh.png)
 
-me :
+---
+
+### Get Profile (Me)
+
+Endpoint:
+
+```http
+GET /api/auth/me
+```
+
+**Hasil Endpoint Me**
 
 ![Me](doc/me.png)
+
 
 
