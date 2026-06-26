@@ -1,26 +1,25 @@
 # Simple-LMS - Advanced Features Integration
 
-## Deskripsi Project
-
-**Simple-LMS** merupakan aplikasi **Learning Management System (LMS)** berbasis **Django** yang mendukung proses pembelajaran daring dengan tiga peran pengguna, yaitu **Admin**, **Instructor**, dan **Student**. Aplikasi ini menggunakan **Docker Compose** sebagai lingkungan deployment, **PostgreSQL** sebagai database, serta **JWT Authentication** untuk proses autentikasi pengguna.
-
-Project mengimplementasikan pengelolaan **course**, **lesson (module & content)**, **enrollment**, **progress pembelajaran**, serta fitur tambahan berupa **search, filter, dan sorting course**, **rating, review, wishlist**, **curriculum berbasis module dan lesson**, serta **student dashboard**.
+Simple-LMS merupakan aplikasi **Learning Management System (LMS)** berbasis **Django** yang mendukung tiga peran pengguna (**Admin, Instructor, dan Student**). Project dijalankan menggunakan **Docker Compose**, menggunakan **PostgreSQL** sebagai database, serta menyediakan REST API yang terdokumentasi menggunakan **Swagger/OpenAPI**.
 
 ---
 
-## Teknologi yang Digunakan
+## Model Utama
 
-* Python 3.11
-* Django 5
-* Django Ninja
-* PostgreSQL
-* Docker & Docker Compose
-* MongoDB
-* JWT Authentication
+Project ini menggunakan beberapa model utama sebagai berikut:
 
----
+| Model                                  | Keterangan                                                                                                  |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **User**                               | Menyimpan data pengguna dengan peran **Admin**, **Instructor**, dan **Student**.                            |
+| **Category**                           | Mengelompokkan course berdasarkan kategori tertentu.                                                        |
+| **Course**                             | Menyimpan informasi utama mengenai mata kuliah yang tersedia.                                               |
+| **CourseModule**                       | Merepresentasikan section atau module pada setiap course.                                                   |
+| **CourseContent (Lesson)**             | Merepresentasikan lesson atau materi pembelajaran yang berada di dalam setiap module.                       |
+| **CourseMember (Enrollment)**          | Menyimpan data mahasiswa yang telah melakukan enrollment pada course.                                       |
+| **CourseContentCompletion (Progress)** | Menyimpan progress pembelajaran berdasarkan lesson (course content) yang telah diselesaikan oleh mahasiswa. |
 
-## Cara Menjalankan Project
+
+# Cara Menjalankan Project
 
 ### 1. Clone Repository
 
@@ -35,7 +34,7 @@ cd Final_ProjectLMS
 docker compose up --build -d
 ```
 
-Pastikan seluruh container berjalan.
+Pastikan seluruh container telah berjalan.
 
 ```bash
 docker ps
@@ -53,11 +52,11 @@ docker exec -it lms-app python manage.py migrate
 docker exec -it lms-app python manage.py createsuperuser
 ```
 
-Gunakan akun berikut:
+Gunakan akun berikut.
 
-| Username | Password    |
-| -------- | ----------- |
-| admin    | password123 |
+| Username | Password      |
+| -------- | ------------- |
+| `admin`  | `password123` |
 
 ### 5. Jalankan Seeder
 
@@ -65,7 +64,7 @@ Gunakan akun berikut:
 docker exec -it lms-app python manage.py seed_data
 ```
 
-### 6. Buka Swagger
+### 6. Akses Swagger
 
 ```
 http://localhost:8000/api/docs
@@ -73,7 +72,7 @@ http://localhost:8000/api/docs
 
 ---
 
-## Akun Demo
+# Akun Demo
 
 | Role       | Username              | Password      |
 | ---------- | --------------------- | ------------- |
@@ -83,36 +82,53 @@ http://localhost:8000/api/docs
 
 ---
 
-## Dokumentasi Lengkap
+# Endpoint Utama
 
-Dokumentasi implementasi, pengujian, serta screenshot hasil testing dapat dilihat pada file berikut:
+## Authentication
 
-* **[FINAL_PROJECT_REPORT.md](FINAL_PROJECT_REPORT.md)**
+* `POST /api/auth/register`
+* `POST /api/auth/login`
+* `POST /api/auth/refresh`
+* `GET /api/auth/me`
 
-Dokumentasi tersebut mencakup:
+## Course
 
-* Deskripsi Project
-* Fitur Dasar
-* Fitur Tambahan
-* Penjelasan Implementasi
-* Cara Menjalankan Project
-* Endpoint Penting
-* Pengujian Docker Compose
-* Pengujian Migration
-* Pengujian Seeder
-* Pengujian Authentication JWT
-* Pengujian Role Management
-* Pengujian Course
-* Pengujian Lesson
-* Pengujian Enrollment
-* Pengujian Progress
-* Pengujian Search, Filter, dan Sorting
-* Pengujian Rating, Review, dan Wishlist
-* Pengujian Student Dashboard
+* `GET /api/courses`
+* `POST /api/courses`
+* `GET /api/courses/{id}`
+
+## Lesson
+
+* `GET /api/lessons`
+* `POST /api/lessons`
+
+## Enrollment
+
+* `POST /api/enrollments`
+* `GET /api/enrollments/my-courses`
+
+## Progress
+
+* `POST /api/enrollments/{id}/progress`
+* `GET /api/courses/{id}/progress`
+
+## Review
+
+* `POST /api/courses/{id}/reviews`
+* `GET /api/courses/{id}/reviews`
+
+## Wishlist
+
+* `POST /api/courses/{id}/wishlist`
+* `DELETE /api/courses/{id}/wishlist`
+* `GET /api/wishlist`
+
+## Dashboard
+
+* `GET /api/dashboard`
 
 ---
 
-## Author
+# Dokumentasi Lengkap
 
-**Hafizh Naufal Nuha Kusuma**
-NIM : A11.2023.14904
+Dokumentasi implementasi, pengujian, dan screenshot dapat dilihat pada file **FINAL_PROJECT_REPORT.md**.
