@@ -18,6 +18,16 @@ Project ini menggunakan beberapa model utama sebagai berikut:
 | **CourseMember (Enrollment)**          | Menyimpan data mahasiswa yang telah melakukan enrollment pada course.                                       |
 | **CourseContentCompletion (Progress)** | Menyimpan progress pembelajaran berdasarkan lesson (course content) yang telah diselesaikan oleh mahasiswa. |
 
+## Model Tambahan
+
+Project ini menambahkan beberapa model untuk mendukung fitur tambahan yang diimplementasikan.
+
+| Model | Fungsi |
+|-------|--------|
+| **CourseModule** | Menyusun curriculum menjadi beberapa section/module pada setiap course. |
+| **CourseContentCompletion** | Menyimpan progress penyelesaian lesson sehingga persentase belajar dapat dihitung secara akurat. |
+| **CourseReview** | Menyimpan rating dan review yang diberikan mahasiswa terhadap course. |
+| **CourseWishlist** | Menyimpan daftar course favorit (wishlist) milik mahasiswa. |
 
 # Cara Menjalankan Project
 
