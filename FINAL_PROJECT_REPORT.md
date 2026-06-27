@@ -747,7 +747,7 @@ Sebagai contoh, apabila sebuah course memiliki **9 lesson** dan mahasiswa telah 
 
 Dengan mekanisme tersebut, progress belajar menjadi lebih akurat karena dihitung berdasarkan lesson yang benar-benar telah diselesaikan oleh mahasiswa, bukan hanya berdasarkan status course secara keseluruhan.
 
-### 13.1 Menampilkan Module
+### 13.2 Menambahkan Module
 
 **Endpoint**
 
@@ -763,7 +763,7 @@ Instructor berhasil menambahkan module pada course.
 
 ---
 
-### 13.2 Menampilkan Module
+### 13.3 Menampilkan Module
 
 **Endpoint**
 
