@@ -569,3 +569,187 @@ GET /api/courses/{id}/progress
 Berhasil menampilkan jumlah lesson yang telah diselesaikan beserta persentase progress belajar pada course.
 
 ![Course Progress](doc/enrollment-course-progres.png)
+
+# 11. Search, Filter, dan Sorting Course
+
+Fitur ini memungkinkan pengguna mencari course berdasarkan kata kunci serta melakukan filter berdasarkan kategori, instructor, level, status, dan sorting sehingga course lebih mudah ditemukan.
+
+### 11.1 Search Course
+
+**Endpoint**
+
+```http
+GET /api/courses?search=Pemrograman
+```
+
+**Hasil**
+
+Berhasil menampilkan course yang sesuai dengan kata kunci pencarian.
+
+![Search Course](doc/course-search.png)
+
+---
+
+### 11.2 Filter Course
+
+**Endpoint**
+
+```http
+GET /api/courses?category=5&teacher=20&level=beginner&status=published
+```
+
+**Hasil**
+
+Berhasil menampilkan course sesuai kategori, instructor, level, dan status yang dipilih.
+
+![Filter Course](doc/course-filter.png)
+
+---
+
+### 11.3 Sorting Course
+
+**Endpoint**
+
+```http
+GET /api/courses?sort=price
+```
+
+**Hasil**
+
+Berhasil mengurutkan daftar course sesuai parameter sorting.
+
+![Sorting Course](doc/course-sorting.png)
+
+# 12. Rating, Review, dan Wishlist Course
+
+Fitur ini memungkinkan mahasiswa memberikan penilaian terhadap course yang telah diikuti serta menyimpan course ke dalam daftar wishlist.
+
+### 12.1 Memberikan Rating dan Review
+
+**Endpoint**
+
+```http
+POST /api/courses/{id}/reviews
+```
+
+**Hasil**
+
+Mahasiswa berhasil memberikan rating dan review terhadap course.
+
+![Create Review](doc/review-create.png)
+
+---
+
+### 12.2 Melihat Review Course
+
+**Endpoint**
+
+```http
+GET /api/courses/{id}/reviews
+```
+
+**Hasil**
+
+Berhasil menampilkan daftar rating dan review dari mahasiswa.
+
+![Review List](doc/review-list.png)
+
+---
+
+### 12.3 Menambahkan Wishlist
+
+**Endpoint**
+
+```http
+POST /api/courses/{id}/wishlist
+```
+
+**Hasil**
+
+Course berhasil ditambahkan ke wishlist.
+
+![Wishlist Add](doc/wishlist-add.png)
+
+---
+
+### 12.4 Melihat Wishlist
+
+**Endpoint**
+
+```http
+GET /api/wishlist
+```
+
+**Hasil**
+
+Berhasil menampilkan daftar course yang telah disimpan ke wishlist.
+
+![Wishlist List](doc/wishlist-list.png)
+
+---
+
+### 12.5 Menghapus Wishlist
+
+**Endpoint**
+
+```http
+DELETE /api/courses/{id}/wishlist
+```
+
+**Hasil**
+
+Course berhasil dihapus dari wishlist.
+
+![Wishlist Delete](doc/wishlist-delete.png)
+
+# 13. Curriculum dan Progress Belajar Detail
+
+Fitur ini mengelompokkan lesson ke dalam beberapa module sehingga struktur pembelajaran menjadi lebih teratur dan progress belajar dapat dihitung berdasarkan lesson yang telah diselesaikan.
+
+### 13.1 Menambahkan Module
+
+**Endpoint**
+
+```http
+POST /api/modules
+```
+
+**Hasil**
+
+Instructor berhasil menambahkan module pada course.
+
+![Module Create](doc/module-create.png)
+
+---
+
+### 13.2 Menampilkan Module
+
+**Endpoint**
+
+```http
+GET /api/modules
+```
+
+**Hasil**
+
+Berhasil menampilkan module beserta lesson yang dimiliki.
+
+![Module List](doc/module-list.png)
+
+# 14. Student Dashboard
+
+Student Dashboard menampilkan ringkasan pembelajaran mahasiswa yang terdiri dari jumlah course aktif, progress belajar, serta rekomendasi course.
+
+### 14.1 Dashboard Mahasiswa
+
+**Endpoint**
+
+```http
+GET /api/dashboard
+```
+
+**Hasil**
+
+Berhasil menampilkan jumlah course aktif, progress pembelajaran, dan rekomendasi course.
+
+![Dashboard](doc/dashboard.png)
