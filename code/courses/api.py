@@ -175,6 +175,20 @@ def list_courses(
         "results": [CourseOut.from_orm(c) for c in qs],
     }
 
+@api.get(
+    "/courses/list",
+    response=CourseListOut,
+    summary="Daftar Course"
+)
+def course_list(request):
+
+    qs = Course.objects.all().order_by("id")
+
+    return {
+        "count": qs.count(),
+        "results": [CourseOut.from_orm(c) for c in qs]
+    }
+
 @api.get("/courses/{id}")
 def detail_course(request, id: int):
     cache_key = f"course:{id}"

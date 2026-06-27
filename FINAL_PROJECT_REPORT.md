@@ -361,6 +361,42 @@ Admin berhasil mengakses endpoint administrasi dan sistem mengembalikan respons 
 ### 6.2 Instructor
 
 Instructor memiliki hak untuk membuat course.
+=======
+## 7. Endpoint Course
+
+### 7.1 Menampilkan Daftar Course
+
+**Endpoint**
+
+```http
+GET /api/courses/list
+```
+
+**Hasil**
+
+Berhasil menampilkan daftar course yang tersedia pada sistem.
+
+![List Course](doc/course-list.png)
+
+---
+
+### 7.2 Menampilkan Detail Course
+
+**Endpoint**
+
+```http
+GET /api/courses/{id}
+```
+
+**Hasil**
+
+Berhasil menampilkan informasi detail dari course yang dipilih.
+
+![Course Detail](doc/course-detail.png)
+
+---
+
+### 7.3 Membuat Course
 
 **Endpoint**
 
@@ -377,10 +413,24 @@ Instructor berhasil membuat course baru.
 **Hasil Ditolak**
 
 Ketika Instructor mencoba mengakses endpoint yang hanya diperuntukkan bagi Admin, sistem mengembalikan **403 Forbidden** dengan pesan **"Admin only"**.
+=======
+**Hasil**
+
+Instructor berhasil membuat course baru.
+
+![Create Course](doc/course-create.png)
+
+---
+
+## 8. Endpoint Lesson
+
+### 8.1 Menampilkan Daftar Lesson
+>>>>>>> 2553f69 (laporan)
 
 **Endpoint**
 
 ```http
+
 POST /api/admin/update-stats
 ```
 
@@ -391,6 +441,54 @@ POST /api/admin/update-stats
 ### 6.3 Student
 
 Student dapat mengakses fitur pembelajaran miliknya, seperti daftar course yang telah diikuti.
+=======
+GET /api/lessons
+```
+
+**Hasil**
+
+Berhasil menampilkan seluruh lesson beserta module dan course yang dimiliki.
+
+![Lesson List](doc/lesson-list.png)
+
+---
+
+### 8.2 Menambahkan Lesson
+
+**Endpoint**
+
+```http
+POST /api/lessons
+```
+
+**Hasil**
+
+Instructor berhasil menambahkan lesson baru ke dalam module yang dipilih.
+
+![Create Lesson](doc/lesson-create.png)
+
+---
+
+## 9. Endpoint Enrollment
+
+### 9.1 Enrollment Course
+
+**Endpoint**
+
+```http
+POST /api/enrollments
+```
+
+**Hasil**
+
+Mahasiswa berhasil melakukan enrollment ke dalam course yang dipilih.
+
+![Enrollment](doc/enrollment-course.png)
+
+---
+
+### 9.2 My Courses
+>>>>>>> 2553f69 (laporan)
 
 **Endpoint**
 
@@ -407,10 +505,24 @@ Student berhasil melihat daftar course yang telah diikuti.
 **Hasil Ditolak**
 
 Student tidak diperbolehkan membuat course. Ketika mencoba mengakses endpoint khusus Instructor, sistem mengembalikan **403 Forbidden** dengan pesan **"Instructor only"**.
+=======
+**Hasil**
+
+Berhasil menampilkan daftar course yang telah diikuti oleh mahasiswa.
+
+![My Courses](doc/enrollment-mycourse.png)
+
+---
+
+## 10. Endpoint Progress
+
+### 10.1 Menandai Progress Lesson
+>>>>>>> 2553f69 (laporan)
 
 **Endpoint**
 
 ```http
+
 POST /api/courses
 ```
 
@@ -423,3 +535,28 @@ Response:
     "detail": "Instructor only"
 }
 ```
+
+POST /api/enrollments/{id}/progress
+```
+
+**Hasil**
+
+Progress lesson berhasil disimpan sebagai materi yang telah diselesaikan oleh mahasiswa.
+
+![Progress Complete](doc/enrollment-progress.png)
+
+---
+
+### 10.2 Melihat Progress Course
+
+**Endpoint**
+
+```http
+GET /api/courses/{id}/progress
+```
+
+**Hasil**
+
+Berhasil menampilkan jumlah lesson yang telah diselesaikan beserta persentase progress belajar pada course.
+
+![Course Progress](doc/enrollment-course-progress.png)
