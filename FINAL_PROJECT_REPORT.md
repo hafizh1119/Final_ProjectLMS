@@ -574,6 +574,14 @@ Berhasil menampilkan jumlah lesson yang telah diselesaikan beserta persentase pr
 
 Fitur ini memungkinkan pengguna mencari course berdasarkan kata kunci serta melakukan filter berdasarkan kategori, instructor, level, status, dan sorting sehingga course lebih mudah ditemukan.
 
+Fitur pencarian (**search**) digunakan untuk menemukan course berdasarkan kata kunci (keyword) yang dimasukkan pengguna, seperti nama course atau informasi yang berkaitan dengan course. Dengan fitur ini, pengguna tidak perlu menelusuri seluruh daftar course secara manual untuk menemukan course yang diinginkan.
+
+Selain pencarian, sistem juga menyediakan fitur **filter** yang memungkinkan pengguna menyaring daftar course berdasarkan beberapa kriteria, yaitu **kategori (category)**, **instruktur (instructor)**, **level pembelajaran (level)**, dan **status course (status)**. Pengguna dapat menggunakan satu atau beberapa filter secara bersamaan sehingga hasil pencarian menjadi lebih spesifik sesuai kebutuhan.
+
+Selanjutnya, fitur **sorting** digunakan untuk mengurutkan daftar course berdasarkan atribut tertentu, seperti harga atau waktu pembuatan course. Dengan demikian, pengguna dapat melihat daftar course sesuai urutan yang diinginkan tanpa harus melakukan pencarian secara manual.
+
+Kombinasi antara fitur search, filter, dan sorting membuat proses pencarian course menjadi lebih cepat, fleksibel, dan efisien, terutama ketika jumlah course pada sistem semakin banyak.
+
 ### 11.1 Search Course
 
 **Endpoint**
