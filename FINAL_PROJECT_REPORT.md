@@ -568,4 +568,4 @@ GET /api/courses/{id}/progress
 
 Berhasil menampilkan jumlah lesson yang telah diselesaikan beserta persentase progress belajar pada course.
 
-![Course Progress](doc/enrollment-course-progress.png)
+![Course Progress](doc/enrollment-course-progres.png)
