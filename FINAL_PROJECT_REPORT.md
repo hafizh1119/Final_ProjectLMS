@@ -795,6 +795,16 @@ Berhasil menampilkan module beserta lesson yang dimiliki.
 
 Student Dashboard menampilkan ringkasan pembelajaran mahasiswa yang terdiri dari jumlah course aktif, progress belajar, serta rekomendasi course.
 
+Dashboard mahasiswa berfungsi sebagai halaman ringkasan yang menyajikan informasi penting mengenai aktivitas pembelajaran mahasiswa. Informasi yang ditampilkan diperoleh secara otomatis berdasarkan data enrollment, progress belajar, dan daftar course yang tersedia pada sistem.
+
+Dashboard terdiri dari tiga komponen utama, yaitu:
+
+* **Active Courses**, menampilkan jumlah course yang sedang diikuti oleh mahasiswa berdasarkan data enrollment.
+* **My Course Progress**, menampilkan persentase progress belajar pada setiap course yang diikuti. Persentase tersebut dihitung berdasarkan jumlah lesson yang telah diselesaikan dibandingkan dengan total lesson yang terdapat pada course.
+* **Recommended Courses**, menampilkan daftar course yang belum diikuti oleh mahasiswa dan masih berstatus **published**. Rekomendasi ini membantu mahasiswa menemukan course lain yang dapat dipelajari setelah menyelesaikan course yang sedang diikuti.
+
+Dengan adanya Student Dashboard, mahasiswa dapat memantau perkembangan pembelajaran secara lebih mudah melalui satu halaman yang menampilkan informasi course aktif, progress belajar, serta rekomendasi course yang relevan.
+
 ### 14.1 Dashboard Mahasiswa
 
 **Endpoint**
