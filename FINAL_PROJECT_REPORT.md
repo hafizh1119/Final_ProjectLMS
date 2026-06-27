@@ -632,6 +632,12 @@ Berhasil mengurutkan daftar course sesuai parameter sorting.
 
 Fitur ini memungkinkan mahasiswa memberikan penilaian terhadap course yang telah diikuti serta menyimpan course ke dalam daftar wishlist.
 
+Fitur **Rating dan Review** digunakan untuk memberikan umpan balik terhadap course yang telah dipelajari oleh mahasiswa. Setiap mahasiswa dapat memberikan **rating** dengan skala **1 hingga 5**, di mana nilai yang lebih tinggi menunjukkan tingkat kepuasan yang lebih baik terhadap course. Selain memberikan rating, mahasiswa juga dapat menuliskan **review** berupa komentar atau pengalaman selama mengikuti course. Informasi tersebut dapat membantu instructor dalam melakukan evaluasi dan peningkatan kualitas materi pembelajaran, serta menjadi referensi bagi mahasiswa lain sebelum mengikuti course yang sama.
+
+Selain fitur penilaian, sistem juga menyediakan fitur **Wishlist** yang memungkinkan mahasiswa menyimpan course yang ingin dipelajari pada kemudian hari. Dengan adanya wishlist, mahasiswa dapat mengelompokkan course yang diminati tanpa harus langsung melakukan enrollment. Daftar wishlist dapat dilihat kembali kapan saja dan course yang sudah tidak diperlukan dapat dihapus dari daftar tersebut.
+
+Kombinasi fitur Rating, Review, dan Wishlist memberikan pengalaman belajar yang lebih interaktif. Mahasiswa dapat memberikan masukan terhadap course yang telah diikuti sekaligus menyimpan course favorit sebagai referensi untuk pembelajaran berikutnya.
+
 ### 12.1 Memberikan Rating dan Review
 
 **Endpoint**
