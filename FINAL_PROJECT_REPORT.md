@@ -818,3 +818,15 @@ GET /api/dashboard
 Berhasil menampilkan jumlah course aktif, progress pembelajaran, dan rekomendasi course.
 
 ![Dashboard](doc/dashboard.png)
+
+# 15. Kendala dan Solusi
+
+Selama proses pengembangan Learning Management System (LMS), terdapat beberapa kendala teknis yang dihadapi. Berikut merupakan kendala beserta solusi yang dilakukan selama proses implementasi.
+
+| No | Kendala                                                                                                                                                                               | Solusi                                                                                                                                                                                                                                                         |
+| -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | Implementasi **Role-Based Access Control (RBAC)** belum berjalan dengan baik karena pengguna belum memiliki pembagian role **Admin**, **Instructor**, dan **Student**.                | Menambahkan **Group** pada Django Authentication, mengelompokkan setiap pengguna sesuai role, serta menerapkan validasi hak akses pada setiap endpoint menggunakan mekanisme permission.                                                                       |
+| 2  | Penyusunan curriculum masih menggunakan daftar lesson tanpa pengelompokan materi sehingga struktur course kurang terorganisir dan progress belajar belum dapat dihitung secara rinci. | Menambahkan model **CourseModule** sebagai pengelompokan lesson berdasarkan urutan pembelajaran (**order**) serta **CourseContentCompletion** untuk mencatat lesson yang telah diselesaikan sehingga progress dihitung berdasarkan jumlah lesson yang selesai. |
+| 3  | Terjadi konflik saat melakukan sinkronisasi repository menggunakan Git sehingga proses **git push** ditolak karena terdapat commit terbaru pada repository GitHub.                    | Melakukan sinkronisasi menggunakan **git fetch** dan **git pull --rebase**, menyelesaikan konflik yang muncul, kemudian melakukan **git push** kembali setelah proses rebase berhasil diselesaikan.                                                            |
+
+Seluruh kendala tersebut berhasil diatasi sehingga implementasi fitur dasar maupun fitur tambahan pada Learning Management System dapat berjalan sesuai dengan kebutuhan dan spesifikasi project.
