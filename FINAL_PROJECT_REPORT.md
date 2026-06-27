@@ -706,7 +706,48 @@ Course berhasil dihapus dari wishlist.
 
 Fitur ini mengelompokkan lesson ke dalam beberapa module sehingga struktur pembelajaran menjadi lebih teratur dan progress belajar dapat dihitung berdasarkan lesson yang telah diselesaikan.
 
-### 13.1 Menambahkan Module
+### 13.1 Struktur Curriculum
+
+Pada project ini, curriculum pembelajaran disusun menggunakan dua entitas utama, yaitu **Module** dan **Lesson**.
+
+* **Module** digunakan sebagai pengelompokan materi pembelajaran (section) dalam suatu course. Setiap course dapat memiliki lebih dari satu module yang disusun berdasarkan urutan pembelajaran menggunakan atribut **order**, sehingga materi dipelajari secara bertahap mulai dari dasar hingga lanjutan.
+* **Lesson** merupakan isi dari setiap module yang berisi materi pembelajaran, seperti materi, video, maupun kuis. Setiap lesson selalu terhubung dengan satu module melalui atribut **module_id**, sehingga setiap lesson hanya dimiliki oleh satu module.
+
+Hubungan antara Course, Module, dan Lesson dapat digambarkan sebagai berikut.
+
+```text
+Course
+│
+├── Module 1 (Order = 1)
+│   ├── Lesson 1
+│   ├── Lesson 2
+│   └── Lesson 3
+│
+├── Module 2 (Order = 2)
+│   ├── Lesson 1
+│   ├── Lesson 2
+│   └── Lesson 3
+│
+└── Module 3 (Order = 3)
+    ├── Lesson 1
+    └── Lesson 2
+```
+
+Struktur tersebut membuat materi pembelajaran lebih terorganisir karena setiap module memiliki kumpulan lesson yang saling berkaitan. Selain mempermudah penyusunan curriculum, struktur ini juga menjadi dasar dalam perhitungan progress belajar mahasiswa.
+
+Progress belajar dihitung berdasarkan jumlah lesson yang telah diselesaikan oleh mahasiswa. Setiap kali mahasiswa menyelesaikan sebuah lesson, sistem akan menyimpan data pada tabel **CourseContentCompletion**. Selanjutnya, sistem membandingkan jumlah lesson yang telah diselesaikan dengan total lesson yang dimiliki oleh course untuk menghasilkan persentase progress belajar.
+
+Perhitungan progress dilakukan menggunakan rumus berikut.
+
+**Progress (%) = (Jumlah Lesson Selesai ÷ Total Lesson pada Course) × 100%**
+
+Sebagai contoh, apabila sebuah course memiliki **9 lesson** dan mahasiswa telah menyelesaikan **3 lesson**, maka progress belajar yang ditampilkan adalah:
+
+**Progress = (3 ÷ 9) × 100% = 33,33%**
+
+Dengan mekanisme tersebut, progress belajar menjadi lebih akurat karena dihitung berdasarkan lesson yang benar-benar telah diselesaikan oleh mahasiswa, bukan hanya berdasarkan status course secara keseluruhan.
+
+### 13.1 Menampilkan Module
 
 **Endpoint**
 
